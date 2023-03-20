@@ -1,0 +1,142 @@
+sudo apt update; sudo apt upgrade
+sudo apt-get update; sudo apt-get upgrade
+
+
+
+#==============================================
+# HOMEBREW
+#==============================================
+
+# prep for homebrew
+sudo apt-get install build-essential procps curl file git bison autoconf vim -y
+
+# install Homebrew per https://brew.sh/
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.profile
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# save Brewfile from Gitlab dotfiles to ~/
+brew tap Homebrew/bundle
+cd ~; brew bundle
+
+
+
+#==============================================
+# GIT AND GITLAB
+#==============================================
+
+# generate SSH keys for Gitlab - https://docs.gitlab.com/ee/user/ssh.html
+# put result of xclip into Gitlab's "Add SSH Key" page
+ssh-keygen -t ed25519 -C "pdmahon1@gmail.com"
+
+# Linux
+sudo apt install xclip
+xclip -sel clip < ~/.ssh/id_ed25519.pub
+# macOS
+cat ~/.ssh/id_ed25519.pub | pbcopy
+
+git config --global color.branch auto;
+git config --global color.diff auto;
+git config --global color.interactive auto;
+git config --global color.status auto;
+git config --global color.ui auto;
+git config --global core.autocrlf input; #repo and macOS/Linux files end in LF but leaves Windows CRLF locally
+git config --global core.editor "code --wait"; #opens VS Code when using `git commit` without the -m flag
+#git config --global core.editor "vim --nofork";  #uses vim instead of "code", as stated above
+git config --global core.excludesfile ~/.gitignore_global;
+git config --global diff.colorMoved zebra;
+git config --global fetch.prune true;
+git config --global help.autocorrect 50; #5 seconds to correct the typo before an assumption is made
+git config --global init.defaultBranch main;
+git config --global pull.rebase true;
+git config --global user.email "pdmahon1@gmail.com";
+git config --global user.name "Peter Daniel Mahon";
+sudo git config --system receive.fsckObjects true; #performs a checksum on all repo files with every `git push`
+
+#verify git config values with `git config -l`
+
+
+
+#==============================================
+# RUBY
+#==============================================
+
+# install Ruby through Rbenv 
+# ref: https://github.com/rbenv/rbenv
+rbenv init  #close and restart the terminal after this
+curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
+
+# list latest stable versions and replace <version> with the latest
+rbenv install -l
+rbenv install <version>
+
+
+
+#==============================================
+# RAIDZ2
+#==============================================
+sudo apt update; sudo apt upgrade
+sudo apt install zfsutils-linux
+
+# verify the existence and locations of hard drives
+sudo fdisk -l
+
+# create the pool
+sudo zpool create ALEXANDRIA raidz2 \
+    /dev/disk/by-id/ata-WDC_WD80EMZZ-11B4FB0_WD-CA04GMWG \
+    /dev/disk/by-id/ata-WDC_WD80EMZZ-11B4FB0_WD-CA067UUK \
+    /dev/disk/by-id/ata-WDC_WD80EMZZ-11B4FB0_WD-CA0LTBTK \
+    /dev/disk/by-id/ata-WDC_WD80EMZZ-11B4FB0_WD-CA0MHPWK \
+    /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_1EKDJH0Z \
+    /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_2SGJX38J
+sudo zpool status
+
+
+# encrypt the pool
+sudo zfs create -o encryption=on -o keylocation=prompt -o keyformat=passphrase ALEXANDRIA/encrypted
+
+# set up auto snapshots - https://github.com/zfsonlinux/zfs-auto-snapshot
+wget https://github.com/zfsonlinux/zfs-auto-snapshot/archive/upstream/1.2.4.tar.gz
+tar -xzf 1.2.4.tar.gz
+cd zfs-auto-snapshot-upstream-1.2.4
+make install
+
+
+
+#==============================================
+# INSTALL ADDITIONAL TOOLS
+#==============================================
+## Linux
+zsh-completions: #linux: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-completions&package=zsh-completions
+
+## VS Code -- if Brew doesn't install it, download .deb from https://code.visualstudio.com/download
+sudo apt install ~/Downloads/code...
+
+# alternatively:
+sudo snap install code --classic
+
+# Node Version Manager (nvm) and Node
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+nvm install --lts
+nvm use --lts
+
+# Scala + sbt
+brew install coursier/formulas/coursier && cs setup
+
+#==============================================
+# ALIASES
+#==============================================
+alias pbcopy=’xsel — clipboard — input’
+alias pbpaste=’xsel — clipboard — output’
+
+
+
+#==============================================
+# EXPORTS
+#==============================================
+export CPPFLAGS=$CPPFLAGS:"-I/usr/local/opt/openjdk/include"
+export PATH=$PATH:./
+export PATH=$PATH:/usr/local/opt/openjdk/bin
+export PATH=$PATH:~/.rbenv/shims
+export PATH=$PATH:~/.rbenv/completions/rbenv.bash
+export PATH=$PATH:~/.rbenv/completions/rbenv.zsh
