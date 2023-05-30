@@ -19,7 +19,8 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew tap Homebrew/bundle
 cd ~; brew bundle
 
-
+# with Python 3 installed, install the Package Installer for Python (PIP)
+sudo apt-get install python3-pip
 
 #==============================================
 # GIT AND GITLAB
