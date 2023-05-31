@@ -111,8 +111,7 @@ brew "ffmpeg"
 brew "gifify" #turns .mov into GIF's - https://github.com/jclem/gifify
 brew "imagemagick" #tools and libraries to manipulate images in many formats - https://imagemagick.org/index.php
 
-# Archive & Git
-brew "git"
+# Archive
 brew "p7zip" #7-zip archiver
 brew "xz" #general purpose compression utility; required by multiple brews
 
@@ -139,7 +138,6 @@ brew "pyenv" #python version management
 brew "python" #python 3
 brew "rbenv" #ruby version manager
 brew "ruby-build" #installs various ruby versions
-brew "rust"
 brew "scala"
 brew "yarn" #JS package manager
 
