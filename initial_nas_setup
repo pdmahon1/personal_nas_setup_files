@@ -124,6 +124,9 @@ nvm use --lts
 # Scala + sbt
 brew install coursier/formulas/coursier && cs setup
 
+# rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 #==============================================
 # ALIASES
 #==============================================
