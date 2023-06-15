@@ -19,8 +19,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew tap Homebrew/bundle
 cd ~; brew bundle
 
-# with Python 3 installed, install the Package Installer for Python (PIP)
-sudo apt-get install python3-pip
+
 
 #==============================================
 # GIT AND GITLAB
@@ -126,6 +125,40 @@ brew install coursier/formulas/coursier && cs setup
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# with Python 3 installed, install the Package Installer for Python (PIP)
+sudo apt-get install python3-pip
+
+
+
+#==============================================
+# DOCKER
+#==============================================
+# From: https://docs.docker.com/engine/install/ubuntu/
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+
+#Add Docker’s official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+#Use the following command to set up the repository
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+#Install Docker Engine, containerd, and Docker Compose.
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+#stop using sudo. From: https://docs.docker.com/engine/install/linux-postinstall/
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+docker run hello-world #test that it works
+
+
 
 #==============================================
 # ALIASES
